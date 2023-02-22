@@ -30,6 +30,8 @@ namespace MonoNumber
         int rand = 0; // current generated number
         int currand = -1; // current generated number for UI
 
+        bool repeat = false;
+
         public SpriteFont arial; // font
         public Game1()
         {
@@ -148,7 +150,7 @@ namespace MonoNumber
                     pressed = true;
 
                 }
-                if (Keyboard.GetState().IsKeyDown(Keys.Space)) // randomize number on space
+                if (Keyboard.GetState().IsKeyDown(Keys.Space) && !repeat) // randomize number on space
                 {
                     bool search = false;
                     for (int i = min; i < max + 1; i++)
@@ -164,7 +166,14 @@ namespace MonoNumber
                         while (true)
                         {
                             Random rnd = new Random();
-                            rand = rnd.Next(min, max + 1);
+                            if (min < max)
+                            {
+                                rand = rnd.Next(min, max + 1);
+                            }
+                            else
+                            {
+                                rand = -2;
+                            }
                             if (rnds[rand] == false)
                             {
                                 currand = rand;
@@ -183,9 +192,26 @@ namespace MonoNumber
                     }
                     pressed = true;
                 }
+                if (Keyboard.GetState().IsKeyDown(Keys.Space) && repeat) // randomize number on space
+                {
+                    Random rnd = new Random();
+                    if (min < max)
+                    {
+                        rand = rnd.Next(min, max + 1);
+                    }
+                    else
+                    {
+                        rand = -2;
+                    }
+                    currand = rand;
+                    pressed = true;
+                }
                 if (Keyboard.GetState().IsKeyDown(Keys.F4))  // reset program on F4
                 {
-                    rnds.Initialize();
+                    for(int i = 0; i < rnds.Length; i++)
+                    {
+                        rnds[i] = false;
+                    }
                     currand = 0;
                     numberinput = "";
 
@@ -237,6 +263,8 @@ namespace MonoNumber
                     pressed = true;
                 }
                 
+                if (Keyboard.GetState().IsKeyDown(Keys.R)) { if (repeat == false) { repeat = true; } else { repeat = false; } pressed = true; }
+                
             }
             if(Keyboard.GetState().GetPressedKeyCount() == 0) { pressed = false; } // check if any key is pressed, if not pressed = false
 
@@ -266,6 +294,8 @@ namespace MonoNumber
             _spriteBatch.DrawString(arial, "Welcome to MonoNumber - Random Number Generator", new Vector2(10, 2), Color.Green, 0f, Vector2.One, (curres + 1) * 0.8f, SpriteEffects.None, 0f);
             _spriteBatch.DrawString(arial, "Enter - confirm number, space - generate new number", new Vector2(10, _graphics.PreferredBackBufferHeight / 9), Color.Green, 0f, Vector2.One, (curres + 1) * 0.8f, SpriteEffects.None, 0f);
             _spriteBatch.DrawString(arial, "F4 - reset values, F1 - change resolution, ESC - exit", new Vector2(10, _graphics.PreferredBackBufferHeight / 6), Color.Green, 0f, Vector2.One, (curres + 1) * 0.8f, SpriteEffects.None, 0f);
+            _spriteBatch.DrawString(arial, "Maximum number = 999", new Vector2(10, _graphics.PreferredBackBufferHeight / 4.5f), Color.Green, 0f, Vector2.One, (curres + 1) * 0.8f, SpriteEffects.None, 0f);
+
             _spriteBatch.DrawString(arial, "lowest random value:", new Vector2(10, _graphics.PreferredBackBufferHeight / 3), Color.Green, 0f, Vector2.One, (curres + 1), SpriteEffects.None, 0f);
             if (!minaccept)
             {
@@ -285,6 +315,10 @@ namespace MonoNumber
             {
                 _spriteBatch.DrawString(arial, "                                 " + max, new Vector2(10, _graphics.PreferredBackBufferHeight / 2.5f), Color.Green, 0f, Vector2.One, (curres + 1), SpriteEffects.None, 0f);
             }
+            _spriteBatch.DrawString(arial, "repeat :", new Vector2(10, _graphics.PreferredBackBufferHeight / 2f), Color.Green, 0f, Vector2.One, (curres + 1), SpriteEffects.None, 0f);
+            _spriteBatch.DrawString(arial, "            " + repeat, new Vector2(10, _graphics.PreferredBackBufferHeight / 2f), Color.Green, 0f, Vector2.One, (curres + 1), SpriteEffects.None, 0f);
+
+
 
             _spriteBatch.DrawString(arial, "Generated number:", new Vector2(10, _graphics.PreferredBackBufferHeight / 1.5f), Color.White, 0f, Vector2.One, (curres + 1), SpriteEffects.None, 0f);
             _spriteBatch.DrawString(arial, "                              " + currand, new Vector2(10, _graphics.PreferredBackBufferHeight / 1.5f), Color.White, 0f, Vector2.One, (curres + 1), SpriteEffects.None, 0f);
